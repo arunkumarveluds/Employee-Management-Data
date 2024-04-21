@@ -1,0 +1,73 @@
+import mysql.connector
+
+# Connect to MySQL database with specified authentication plugin
+db_connection = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="Vedes21@",
+    database="employee_management",
+    auth_plugin='mysql_native_password'
+)
+
+# Continue with your code...
+
+
+# Create cursor object
+cursor = db_connection.cursor()
+
+# Function to add a new employee
+def add_employee(employee_data):
+    sql = "INSERT INTO employees (name, email, phone, department_id, salary) VALUES (%s, %s, %s, %s, %s)"
+    cursor.execute(sql, employee_data)
+    db_connection.commit()
+    print("Employee added successfully!")
+
+# Function to get employee information by ID
+def get_employee(employee_id):
+    sql = "SELECT * FROM employees WHERE employee_id = %s"
+    cursor.execute(sql, (employee_id,))
+    employee = cursor.fetchone()
+    if employee:
+        print("Employee Information:")
+        print("ID:", employee[0])
+        print("Name:", employee[1])
+        print("Email:", employee[2])
+        print("Phone:", employee[3])
+        print("Department ID:", employee[4])
+        print("Salary:", employee[5])
+    else:
+        print("Employee not found.")
+
+# Function to update employee details
+def update_employee(employee_id, new_data):
+    sql = "UPDATE employees SET name=%s, email=%s, phone=%s, department_id=%s, salary=%s WHERE employee_id=%s"
+    cursor.execute(sql, (*new_data, employee_id))
+    db_connection.commit()
+    print("Employee details updated successfully!")
+
+# Function to delete an employee
+def delete_employee(employee_id):
+    sql = "DELETE FROM employees WHERE employee_id = %s"
+    cursor.execute(sql, (employee_id,))
+    db_connection.commit()
+    print("Employee deleted successfully!")
+
+# Example usage
+if __name__ == "__main__":
+    # Add a new employee
+    new_employee = ("John Doe", "john.doe@example.com", "123-456-7890", 1, 50000)
+    add_employee(new_employee)
+
+    # Get employee information
+    get_employee(1)
+
+    # Update employee details
+    updated_data = ("Jane Smith", "jane.smith@example.com", "987-654-3210", 2, 60000)
+    update_employee(1, updated_data)
+
+    # Delete an employee
+    delete_employee(1)
+
+# Close cursor and database connection
+cursor.close()
+db_connection.close()
